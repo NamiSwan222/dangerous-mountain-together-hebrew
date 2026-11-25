@@ -1,0 +1,12 @@
+{
+  "packId": "dangerous-mountain-together-he",
+  "gameId": "dangerous-mountain-together",
+  "version": "1.0.0",
+  "title": "Dangerous Mountain Together – עברית",
+  "authors": ["Tirgumim"],
+  "engine": "unreal5",
+  "requiresAccount": false,
+  "allowUnknownGameVersion": true,
+  "activation": { "mode": "args", "exe": "DMT.exe", "args": ["-tirgumim_he"], "via": "steam" },
+  "filesDir": "../work/pack/files"
+}

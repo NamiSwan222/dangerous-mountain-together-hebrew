@@ -1,0 +1,15 @@
+{
+  "id": "dangerous-mountain-together",
+  "name": "Dangerous Mountain Together",
+  "nameHe": "Dangerous Mountain Together",
+  "engine": "unreal5",
+  "aboutHe": "תרגום מלא לעברית של כל טקסט המשחק: התפריטים, ההגדרות, הלובי והמשחק המשותף, השמירות, ההתאמה האישית וההודעות, עם אותיות עבריות בגופני המשחק. העברית פעילה רק כשמפעילים את המשחק מהמשגר; הפעלה מ-Steam נשארת באנגלית.",
+  "detect": {
+    "steamAppId": "3955660",
+    "epicAppName": null,
+    "markerFile": "DMT.exe",
+    "processNames": ["DMT-Win64-Shipping.exe", "DMT.exe"]
+  },
+  "pack": { "tag": "dangerous-mountain-together-*", "asset": "dangerous-mountain-together-he-*.zip" },
+  "requires": []
+}
