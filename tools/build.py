@@ -9,7 +9,7 @@ work/pack/files/DMT/Binaries/Win64/:
                                       Akira fonts with Hebrew letters from Rubik (OFL)
 UE5 does bidi and shaping itself: the Hebrew stays in logical order.
 """
-import json, os, shutil, subprocess, sys
+import hashlib, json, os, shutil, struct, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
@@ -23,6 +23,18 @@ FONTS = {
 }
 FONT_SRC = os.path.join(ROOT, '..', 'tomb-raider-2013', 'tools', 'bin', 'fonts')
 PAK_NAME = 'zzz_tirgumim_he_P.pak'
+UTOC_NAME = PAK_NAME[:-4] + '.utoc'
+
+
+def empty_utoc(path):
+    """An IoStore TOC with no chunks (version 8 like the game's). The game uses IoStore, and UE 5.6 then
+    refuses to mount a .pak without a .utoc of the same name ("IoStore container not found"), so the pak
+    alone was silently skipped. No chunks: no .ucas (PartitionCount 0, as UE writes empty containers)."""
+    cid = struct.unpack('<Q', hashlib.sha1(UTOC_NAME.encode()).digest()[:8])[0]
+    h = b'-==--==--==--==-' + struct.pack('<BBHIIIIIIIII', 8, 0, 0, 144, 0, 0, 12, 0, 32, 65536, 0, 0)
+    h += struct.pack('<Q', cid) + bytes(16) + struct.pack('<BBHIQII', 0, 0, 0, 0, 2**64 - 1, 0, 0) + bytes(40)
+    assert len(h) == 144
+    open(path, 'wb').write(h)
 
 
 def main():
@@ -61,9 +73,11 @@ def main():
     if r.returncode or not os.path.exists(pak):
         sys.exit(r.stdout[-2000:] + r.stderr[-2000:])
     pak_v11.convert(pak)  # the game is UE 5.6: it stops at start on a 5.7+ (v12) pak
+    empty_utoc(os.path.join(data, UTOC_NAME))
     with open(os.path.join(data, 'redirect.cfg'), 'w', newline='\n') as f:
         f.write('root=..\\..\\..\n')
         f.write(f'add=DMT\\Content\\Paks\\{PAK_NAME}\n')
+        f.write(f'add=DMT\\Content\\Paks\\{UTOC_NAME}\n')
     shutil.copy(os.path.join(ROOT, 'tools', 'proxy', 'target', 'release', 'tirgumim_proxy.dll'), os.path.join(win, 'dsound.dll'))
     print('pak', os.path.getsize(pak), 'bytes')
 
