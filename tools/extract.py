@@ -16,12 +16,18 @@ PAK = os.path.join(GAME, 'DMT', 'Content', 'Paks', 'DMT-Windows.pak')
 UNREALPAK = os.environ.get('UNREALPAK', r'D:\UE\UE_5.8\Engine\Binaries\Win64\UnrealPak.exe')
 LOCRES = 'DMT/Content/Localization/Game/en/Game.locres'
 FILTERS = ['*Localization/Game/*', '*UI/Assets/Fonts/*']
+UTOC = os.path.join(GAME, 'DMT', 'Content', 'Paks', 'DMT-Windows.utoc')
+# cooked widgets with culture-invariant text (not in Game.locres), patched by tools/build.py
+PACKAGES = ['*/UI/Sections/WB_Options.*']
 
 
 def main():
     out = os.path.join(ROOT, 'work', 'extract')
     for f in FILTERS:
         subprocess.run([UNREALPAK, PAK, '-Extract', out, f'-Filter={f}'], check=True, capture_output=True)
+    for f in PACKAGES:  # zen packages: <name>.uheader + <name>.uexp
+        subprocess.run([UNREALPAK, 'IoStore', f'-FindAndExtract={UTOC}', f'-PackageFilter={f}',
+                        f'-OutPath={os.path.join(out, "iostore")}'], check=True, capture_output=True)
     ver, ents = locres.read(os.path.join(out, LOCRES))
     rows = [{'id': f'{ns}|{key}', 'en': text} for ns, _, key, _, _, text in ents]
     os.makedirs(os.path.join(ROOT, 'work', 'en'), exist_ok=True)
