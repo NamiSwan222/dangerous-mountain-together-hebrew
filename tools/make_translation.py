@@ -146,13 +146,22 @@ HE = {
     'windowedFullscreen': 'חלון במסך מלא',
     'yes': 'כן',
     'clear': 'ניקוי',
+    'rearView': 'מבט לאחור',
+    'offroad': 'שטח',
+}
+
+# In the game's string tables (ST_UI) but not in its Game.locres (added after the last localization
+# export): id -> English source. tools/build.py adds them to the locres with the hashes UE expects.
+EXTRA = {
+    'ST_UI|rearView': 'Rear View',
+    'ST_UI|offroad': 'Offroad',
 }
 
 
 def main():
     en = json.load(open(os.path.join(ROOT, 'work', 'en', 'strings.json'), encoding='utf-8'))
     out = {}
-    for r in en:
+    for r in en + [{'id': k} for k in EXTRA]:
         key = r['id'].split('|', 1)[1]
         if key in HE:
             out[r['id']] = HE[key]

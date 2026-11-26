@@ -82,6 +82,8 @@ def add_hebrew(ttf, src_path, codes=HEBREW):
         adv = round(s['hmtx'][scmap[code]][0] * scale)
         g.recalcBounds(t['glyf'])
         t['hmtx'][name] = (adv, getattr(g, 'xMin', 0))
+        if 'vmtx' in t:  # CJK fonts (ZenMaru) have vertical metrics: every glyph needs one
+            t['vmtx'][name] = (t['head'].unitsPerEm, 0)
         if name not in order:
             order.append(name)
         for c in cmap_tables:

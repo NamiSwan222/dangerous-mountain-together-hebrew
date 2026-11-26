@@ -13,7 +13,11 @@ the game is started from the Tirgumim launcher ("שחק בעברית"); a Steam 
 - The pak (UnrealPak, uncompressed) must be pak version 11: the game is UE 5.6 and stops at start
   (LowLevelFatalError, PakFile.cpp) on the version 12 pak UnrealPak 5.7+ writes, so `tools/pak_v11.py`
   rewrites its directory index to version 11 after UnrealPak. The pak holds the English `Game.locres` with the Hebrew text and the
-  Tango Sans (Regular/Bold) and Akira fonts with Hebrew letters from Rubik (OFL). A cooked `.ufont` here is
+  Tango Sans (Regular/Bold), Akira and ZenMaru Gothic (Black/Bold: `WB_Text`, e.g. the ESC/ENTER hints;
+  a composite font with no fallback, so missing Hebrew there drew nothing) fonts with Hebrew letters from Rubik (OFL).
+  Two ST_UI strings the game added after its last localization export (`rearView`, `offroad`) are not in
+  Game.locres; `tools/build.py` adds them (`make_translation.EXTRA`) with UE's hashes (`tools/ue_hash.py`).
+  "Max FPS" (Options) and the language name "English" are culture-invariant texts in cooked widgets: they stay English. A cooked `.ufont` here is
   `u32 length + TTF + 4 zero bytes`; Akira (CFF) is converted to TrueType first. UE5 does bidi itself.
 
 ## Build

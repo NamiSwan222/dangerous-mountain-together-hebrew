@@ -14,12 +14,15 @@ import hashlib, json, os, shutil, struct, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
 sys.path.append(os.path.join(ROOT, '..', 'dispatch', 'tools'))
-import extract, fonts, locres, pak_v11  # noqa: E402
+import extract, fonts, locres, make_translation, pak_v11, ue_hash  # noqa: E402
 
 FONTS = {
     'DMT/Content/UI/Assets/Fonts/Tango/TangoSans.ufont': 'Rubik-Regular.ttf',
     'DMT/Content/UI/Assets/Fonts/Tango/TangoSans_Bold.ufont': 'Rubik-Bold.ttf',
     'DMT/Content/UI/Assets/Fonts/Akira/Akira_Expanded_Demo.ufont': 'Rubik-Black.ttf',
+    # WB_Text (the input hints next to the key icons, ...) uses ZenMaru, a composite font with no fallback
+    'DMT/Content/UI/Assets/Fonts/ZenMaru/ZenMaruGothic-Black.ufont': 'Rubik-Black.ttf',
+    'DMT/Content/UI/Assets/Fonts/ZenMaru/ZenMaruGothic-Bold.ufont': 'Rubik-Bold.ttf',
 }
 FONT_SRC = os.path.join(ROOT, '..', 'tomb-raider-2013', 'tools', 'bin', 'fonts')
 PAK_NAME = 'zzz_tirgumim_he_P.pak'
@@ -45,6 +48,11 @@ def main():
     he = json.load(open(os.path.join(ROOT, 'translation', 'he', 'strings.json'), encoding='utf-8'))
     ver, ents = locres.read(os.path.join(ex, extract.LOCRES))
     out = [(ns, nsh, key, kh, sh, he.get(f'{ns}|{key}', text)) for ns, nsh, key, kh, sh, text in ents]
+    nsh = {ns: h for ns, h, *_ in ents}
+    for sid, src in make_translation.EXTRA.items():
+        ns, key = sid.split('|', 1)
+        if sid in he and not any(e[0] == ns and e[2] == key for e in ents):
+            out.append((ns, nsh.get(ns, ue_hash.key_hash(ns)), key, ue_hash.key_hash(key), ue_hash.source_hash(src), he[sid]))
     dst = os.path.join(stage, extract.LOCRES)
     os.makedirs(os.path.dirname(dst))
     locres.write(dst, ver, out)

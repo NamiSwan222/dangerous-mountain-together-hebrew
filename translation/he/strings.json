@@ -136,5 +136,7 @@
  "ST_UI|windowed": "חלון",
  "ST_UI|windowedFullscreen": "חלון במסך מלא",
  "ST_UI|yes": "כן",
- "ST_UI|clear": "ניקוי"
+ "ST_UI|clear": "ניקוי",
+ "ST_UI|rearView": "מבט לאחור",
+ "ST_UI|offroad": "שטח"
 }
