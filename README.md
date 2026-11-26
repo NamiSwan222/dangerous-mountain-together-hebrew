@@ -9,7 +9,9 @@ the game is started from the Tirgumim launcher ("שחק בעברית"); a Steam 
   system dsound.dll). Only with `-tirgumim_he` on the command line it adds
   `tirgumim/he/zzz_tirgumim_he_P.pak` to the game's `DMT/Content/Paks` listing (`redirect.cfg`), so
   UE5 mounts it after the game's pak.
-- The pak (UnrealPak, v11, uncompressed) holds the English `Game.locres` with the Hebrew text and the
+- The pak (UnrealPak, uncompressed) must be pak version 11: the game is UE 5.6 and stops at start
+  (LowLevelFatalError, PakFile.cpp) on the version 12 pak UnrealPak 5.7+ writes, so `tools/pak_v11.py`
+  rewrites its directory index to version 11 after UnrealPak. The pak holds the English `Game.locres` with the Hebrew text and the
   Tango Sans (Regular/Bold) and Akira fonts with Hebrew letters from Rubik (OFL). A cooked `.ufont` here is
   `u32 length + TTF + 4 zero bytes`; Akira (CFF) is converted to TrueType first. UE5 does bidi itself.
 

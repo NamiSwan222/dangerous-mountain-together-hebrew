@@ -14,7 +14,7 @@ import json, os, shutil, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
 sys.path.append(os.path.join(ROOT, '..', 'dispatch', 'tools'))
-import extract, fonts, locres  # noqa: E402
+import extract, fonts, locres, pak_v11  # noqa: E402
 
 FONTS = {
     'DMT/Content/UI/Assets/Fonts/Tango/TangoSans.ufont': 'Rubik-Regular.ttf',
@@ -60,6 +60,7 @@ def main():
     r = subprocess.run([extract.UNREALPAK, pak, f'-Create={lst}'], capture_output=True, text=True)
     if r.returncode or not os.path.exists(pak):
         sys.exit(r.stdout[-2000:] + r.stderr[-2000:])
+    pak_v11.convert(pak)  # the game is UE 5.6: it stops at start on a 5.7+ (v12) pak
     with open(os.path.join(data, 'redirect.cfg'), 'w', newline='\n') as f:
         f.write('root=..\\..\\..\n')
         f.write(f'add=DMT\\Content\\Paks\\{PAK_NAME}\n')
